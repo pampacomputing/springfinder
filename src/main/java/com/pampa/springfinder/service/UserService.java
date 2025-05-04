@@ -6,6 +6,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class UserService {
@@ -13,20 +16,20 @@ public class UserService {
     final UserRepository userRepository;
 
     @Transactional
-    public UserModel findUser(UserModel userModel) {
-        UserModel user;
-        try {
-            if (!userModel.getCpf().isEmpty())
-                user = userRepository.getReferenceById(userModel.getCpf());
-            else if (!userModel.getName().isEmpty())
-                user = userRepository.findByName(userModel.getName());
-            else if (!userModel.getDate().isEmpty())
-                user = userRepository.findByDate(userModel.getDate());
-            else user = new UserModel("", "", "", "");
-        } catch (Exception e) {
-            throw new RuntimeException("Not enough data to find user");
+    public List<UserModel> findUsers(UserModel userModel) {
+        if (userModel.getCpf() != null && !userModel.getCpf().isBlank()) {
+            Optional<UserModel> opt = userRepository.findById(userModel.getCpf());
+            return opt.map(List::of).orElseGet(List::of);
         }
-        return user;
+        else if (userModel.getName() != null && !userModel.getName().isBlank()) {
+            return userRepository.findAllByName(userModel.getName());
+        }
+        else if (userModel.getDate() != null && !userModel.getDate().isBlank()) {
+            return userRepository.findAllByDate(userModel.getDate());
+        }
+        else {
+            return List.of();
+        }
     }
 
 }

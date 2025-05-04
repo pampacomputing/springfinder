@@ -1,6 +1,7 @@
 package com.pampa.springfinder.controller;
 
 import com.pampa.springfinder.model.UserModel;
+import com.pampa.springfinder.model.ResponseModel;
 import com.pampa.springfinder.record.UserRecordDTO;
 import com.pampa.springfinder.service.UserService;
 import jakarta.validation.Valid;
@@ -14,29 +15,34 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 public class UserController {
 
-    final private static Logger logger = LoggerFactory.getLogger(UserService.class);
-
-    final UserService userService;
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final UserService userService;
 
     @PostMapping("/user-info")
-    public ResponseEntity<UserModel> getUserData(@RequestBody @Valid UserRecordDTO userRecordDTO) {
-        var userModel = new UserModel();
+    public ResponseEntity<ResponseModel> getUserData(
+            @RequestBody @Valid UserRecordDTO userRecordDTO
+    ) {
+        // map incoming DTO to the JPA model
+        UserModel userModel = new UserModel();
         BeanUtils.copyProperties(userRecordDTO, userModel);
 
         logger.info("User data requested: {}", userModel);
 
-        ResponseEntity<UserModel> response;
         try {
-            response = ResponseEntity.status(HttpStatus.FOUND).body(userService.findUser(userModel));
-            logger.info("User blablabla data found: {}", response.getBody());
+            List<UserModel> users = userService.findUsers(userModel);
+            ResponseModel response = new ResponseModel(users);
+
+            logger.info("Users found: {}", users);
+            return ResponseEntity.status(HttpStatus.FOUND).body(response);
         } catch (Exception e) {
-            logger.error("Error finding user data: {}", e.getMessage());
+            logger.error("Error finding user data:", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-        return response;
     }
 }
