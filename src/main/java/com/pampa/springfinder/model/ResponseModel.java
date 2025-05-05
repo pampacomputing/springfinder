@@ -11,5 +11,5 @@ import java.util.List;
 @Setter
 @ToString
 public class ResponseModel implements Serializable {
-    private List<UserModel> users;
+    private List<UserModel> data;
 }

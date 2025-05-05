@@ -28,7 +28,6 @@ public class UserController {
     public ResponseEntity<ResponseModel> getUserData(
             @RequestBody @Valid UserRecordDTO userRecordDTO
     ) {
-        // map incoming DTO to the JPA model
         UserModel userModel = new UserModel();
         BeanUtils.copyProperties(userRecordDTO, userModel);
 
