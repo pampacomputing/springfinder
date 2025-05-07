@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<UserModel, String> {
-    List<UserModel> findAllByName(String name);
-    List<UserModel> findAllByDate(String date);
+
+    List<UserModel> findFirst1000AllByNameLike(String name);
+    List<UserModel> findFirst1000AllByDateLike(String date);
 }

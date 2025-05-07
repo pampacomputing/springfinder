@@ -22,10 +22,10 @@ public class UserService {
             return opt.map(List::of).orElseGet(List::of);
         }
         else if (userModel.getName() != null && !userModel.getName().isBlank()) {
-            return userRepository.findAllByName(userModel.getName());
+            return userRepository.findFirst1000AllByNameLike(userModel.getName());
         }
         else if (userModel.getDate() != null && !userModel.getDate().isBlank()) {
-            return userRepository.findAllByDate(userModel.getDate());
+            return userRepository.findFirst1000AllByDateLike(userModel.getDate());
         }
         else {
             return List.of();
